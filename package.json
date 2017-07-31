@@ -1,0 +1,16 @@
+{
+  "name": "matrix-puppet-discord",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "tsc"
+  },
+  "author": "Aria",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "discord.js": "^11.1.0"
+  }
+}
