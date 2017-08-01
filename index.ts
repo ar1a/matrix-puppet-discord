@@ -8,9 +8,7 @@ import {
 } from 'matrix-puppet-bridge';
 
 import { DiscordClient } from './client';
-const path = require('path');
 const debug = require('debug')('matrix-puppet:discord');
-const fs = require('fs');
 
 export class Adapter extends ThirdPartyAdapter {
     public serviceName = 'Discord';
@@ -110,10 +108,10 @@ export class Adapter extends ThirdPartyAdapter {
 
     sendMessage(roomid: string, text: string): Promise<void> {
         debug('sendMessage', roomid, text);
-        return Promise.resolve(this.client.sendMessage(roomid, text));
+        this.client.sendMessage(roomid, text);
     }
     sendImageMessage(roomid: string, image: any): Promise<void> {
         debug('sendImageMessage', roomid, image);
-        return Promise.resolve(this.client.sendImageMessage(roomid, image));
+        this.client.sendImageMessage(roomid, image);
     }
 }

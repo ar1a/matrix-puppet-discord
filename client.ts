@@ -1,6 +1,6 @@
-const fs = require('fs');
-const Promise = require('bluebird');
-const discordjs = require('discord.js');
+import * as discordjs from 'discord.js';
+// const Promise = require('bluebird');
+// const discordjs = require('discord.js');
 const debug = require('debug')('matrix-puppet:discord:client');
 
 export const EventEmitter = require('events').EventEmitter;
@@ -26,7 +26,13 @@ export class DiscordClient extends EventEmitter {
         return new Promise(() => {
             debug('sending', text,'to',id);
             this.findChannel(id).send(text);
-        })
+        });
+    }
+
+    sendImageMessage(id: string, image: any) {
+        return new Promise(() => {
+            this.findChannel(id).sendFile(image.url);
+        });
     }
 
     getUser(id: string) {
