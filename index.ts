@@ -97,11 +97,22 @@ export class Adapter extends ThirdPartyAdapter {
             } else if (channel.type = "dm") {
                 name = undefined;
             }
-            debug('topic', topic);
+            let avatarUrl = undefined;
+            if(channel.type === "text") {
+                avatarUrl = channel.guild.iconUrl;
+            } else if (channel.type === "dm") {
+                avatarUrl = channel.recipient.avatarURL;
+            } // TODO: group icon
+
+            if(avatarUrl == null) {
+                debug('WHOA BABY THIS SHOULDNT HAPPEN ALERT', channel);
+                avatarUrl = undefined;
+            }
             return Promise.resolve(<RoomData> {
                 name: name,
                 topic: topic,
-                isDirect: (channel.type === "dm")
+                isDirect: (channel.type === "dm"),
+                avatarUrl: avatarUrl
             });
         }
     }
