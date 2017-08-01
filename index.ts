@@ -53,7 +53,7 @@ export class Adapter extends ThirdPartyAdapter {
             payload.senderId = data.author.id;
             payload.senderName = data.author.username;
             payload.avatarUrl = data.author.avatarURL;
-            if(payload.avatarUrl == null) {
+            if(payload.avatarUrl === null) {
                 payload.avatarUrl = "https://vignette3.wikia.nocookie.net/drawntolife/images/f/f3/Discord_Link.png/revision/latest?cb=20160529154328";
             }
         }
@@ -94,7 +94,7 @@ export class Adapter extends ThirdPartyAdapter {
             let name = channel.type;
             if(channel.type == "text") {
                 name = "[" + channel.guild.name + "] " + channel.name;
-            } else if (channel.type = "dm") {
+            } else if (channel.type === "dm") {
                 name = undefined;
             }
             let avatarUrl = undefined;
@@ -104,7 +104,7 @@ export class Adapter extends ThirdPartyAdapter {
                 avatarUrl = channel.recipient.avatarURL;
             } // TODO: group icon
 
-            if(avatarUrl == null) {
+            if(avatarUrl === null) {
                 debug('WHOA BABY THIS SHOULDNT HAPPEN ALERT', channel);
                 avatarUrl = undefined;
             }
