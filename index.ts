@@ -20,6 +20,7 @@ export class Adapter extends ThirdPartyAdapter {
 
         this.client.on('ready', () => {
             debug('logged in!');
+            debug(this.config);
         });
 
         this.client.on('sent', msg => {
@@ -27,6 +28,11 @@ export class Adapter extends ThirdPartyAdapter {
         });
 
         this.client.on('message', msg => {
+            if(msg.channel.type === "text") {
+                if(!this.config.guilds.includes(msg.guild.id)) {
+                    return;
+                }
+            }
             debug('message', msg.author.username, msg.content);
             this.handleDiscordMessage(msg);
         });
@@ -105,7 +111,7 @@ export class Adapter extends ThirdPartyAdapter {
         payload.text = msg.content;
         if(msg.attachments.size > 0) {
             for(let attachment of msg.attachments) {
-                payload.text += " " + attachment.url;
+                payload.text += " " + attachment[1].url;
             }
         }
         return this.puppetBridge.sendMessage(payload);
