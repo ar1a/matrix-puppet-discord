@@ -109,7 +109,7 @@ export class Adapter extends ThirdPartyAdapter {
     handleDiscordMessage(msg) {
         let payload =  <ThirdPartyMessagePayload>this.getPayload(msg);
         payload.text = msg.content;
-        if(msg.attachments.size > 0) {
+        if(msg.attachments !== undefined && msg.attachments.size > 0) {
             for(let attachment of msg.attachments) {
                 payload.text += " " + attachment[1].url;
             }
