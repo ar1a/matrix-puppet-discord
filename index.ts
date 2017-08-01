@@ -10,7 +10,6 @@ import {
 import { DiscordClient } from './client';
 const path = require('path');
 const debug = require('debug')('matrix-puppet:discord');
-const tmp = require('tmp');
 const fs = require('fs');
 
 export class Adapter extends ThirdPartyAdapter {
@@ -19,13 +18,14 @@ export class Adapter extends ThirdPartyAdapter {
     startClient(): Promise<void> {
         this.client = new DiscordClient();
         this.client.configure(this.config);
+        debug('startClient');
 
         this.client.on('ready', () => {
             debug('logged in!');
         })
 
         this.client.on('message', msg => {
-            debug('message', msg);
+            debug('message', msg.author.username, msg.content);
         })
 
 
@@ -35,9 +35,11 @@ export class Adapter extends ThirdPartyAdapter {
     }
 
     sendMessage(roomid: string, text: string): Promise<void> {
+        debug('sendMessage', roomid, text);
         return new Promise(() => {});
     }
-    sendImageMessage(): Promise<void> {
+    sendImageMessage(roomid: string, image: any): Promise<void> {
+        debug('sendImageMessage', roomid, image);
         return new Promise(() => {});
     }
 }

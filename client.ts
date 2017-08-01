@@ -1,6 +1,6 @@
 const fs = require('fs');
 const Promise = require('bluebird');
-const discordjs = Promise.promisify(require('discord.js'));
+const discordjs = require('discord.js');
 const debug = require('debug')('matrix-puppet:discord:client');
 
 export const EventEmitter = require('events').EventEmitter;
@@ -18,13 +18,28 @@ export class DiscordClient extends EventEmitter {
         this.lastMsgId = null;
     }
 
+    findChannel(id: string) {
+        return this.api.channels.get(id);
+    }
+
+    sendMessage(id: string, text: string) {
+        return new Promise(() => {
+            debug('sending', text,'to',id);
+            this.findChannel(id).send(text);
+        })
+    }
+
     connect() {
         const client = new discordjs.Client();
         this.api = client;
         client.on('message', message => {
-            debug('message', message);
+            this.emit('message', message);
         });
 
-        client.login(this.auth.token);
+        client.on('ready', () => {
+            this.emit('ready');
+        })
+
+        return client.login(this.auth.token);
     }
 }
