@@ -45,9 +45,30 @@ export class Adapter extends ThirdPartyAdapter {
             payload.senderId = data.author.id;
             payload.senderName = data.author.username;
             payload.avatarUrl = data.author.avatarURL;
+            if(payload.avatarUrl == null) {
+                payload.avatarUrl = "https://vignette3.wikia.nocookie.net/drawntolife/images/f/f3/Discord_Link.png/revision/latest?cb=20160529154328";
+            }
         }
         debug('payload', payload);
         return payload;
+    }
+
+    getUserData(id: string): Promise<UserData> {
+        let user = this.client.getUser(id);
+        let payload = <UserData> {
+            name: id
+        };
+        if(user) {
+            payload.name = user.username;
+            payload.avatarUrl = user.avatarURL;
+            if(payload.avatarUrl == null) {
+                payload.avatarUrl = "https://vignette3.wikia.nocookie.net/drawntolife/images/f/f3/Discord_Link.png/revision/latest?cb=20160529154328";
+            }
+        }
+
+        debug('getUserData', user.avatarURL, payload);
+
+        return Promise.resolve(payload);
     }
 
     getRoomData(id: string): Promise<RoomData> {
@@ -85,7 +106,9 @@ export class Adapter extends ThirdPartyAdapter {
 
     sendMessage(roomid: string, text: string): Promise<void> {
         debug('sendMessage', roomid, text);
-        return new Promise(() => {});
+        return new Promise(() => {
+            this.client.sendMessage(roomid, text);
+        });
     }
     sendImageMessage(roomid: string, image: any): Promise<void> {
         debug('sendImageMessage', roomid, image);
