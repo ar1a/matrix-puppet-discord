@@ -22,16 +22,23 @@ export class DiscordClient extends EventEmitter {
         return this.api.channels.get(id);
     }
 
-    sendMessage(id: string, text: string) {
+    sendMessage(id: string, text: string): Promise<void> {
         return new Promise(() => {
             debug('sending', text,'to',id);
             this.findChannel(id).send(text);
         });
     }
 
-    sendImageMessage(id: string, image: any) {
+    sendImageMessage(id: string, image: any): Promise<void> {
         return new Promise(() => {
-            this.findChannel(id).sendFile(image.url);
+            this.findChannel(id).send('\ufff0', {
+                files: [
+                    {
+                    attachment: image.url,
+                    name: image.text.slice(0,-2)
+                }
+                ]
+            });
         });
     }
 

@@ -103,15 +103,20 @@ export class Adapter extends ThirdPartyAdapter {
     handleDiscordMessage(msg) {
         let payload =  <ThirdPartyMessagePayload>this.getPayload(msg);
         payload.text = msg.content;
+        if(msg.attachments.size > 0) {
+            for(let attachment of msg.attachments) {
+                payload.text += " " + attachment.url;
+            }
+        }
         return this.puppetBridge.sendMessage(payload);
     }
 
     sendMessage(roomid: string, text: string): Promise<void> {
         debug('sendMessage', roomid, text);
-        this.client.sendMessage(roomid, text);
+        return this.client.sendMessage(roomid, text);
     }
     sendImageMessage(roomid: string, image: any): Promise<void> {
         debug('sendImageMessage', roomid, image);
-        this.client.sendImageMessage(roomid, image);
+        return this.client.sendImageMessage(roomid, image);
     }
 }
