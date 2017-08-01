@@ -24,7 +24,7 @@ export class Adapter extends ThirdPartyAdapter {
         });
 
         this.client.on('sent', msg => {
-            this.handleDiscordMessage({channel: msg.channel, content: msg.content});
+            this.handleDiscordMessage({channel: msg.channel, content: msg.content, sentraw: msg});
         });
 
         this.client.on('message', msg => {
@@ -109,6 +109,15 @@ export class Adapter extends ThirdPartyAdapter {
     handleDiscordMessage(msg) {
         let payload =  <ThirdPartyMessagePayload>this.getPayload(msg);
         payload.text = msg.content;
+        if(msg.cleanContent !== undefined) {
+          payload.text = msg.cleanContent;
+        } else {
+            // This will be true if this is from a 'sent' event.
+            if(msg.sentraw.channel.type === "dm") {
+                payload.senderName = msg.sentraw.channel.recipient.username;
+                payload.avatarUrl = msg.sentraw.channel.recipient.avatarURL;
+            }
+        }
         if(msg.attachments !== undefined && msg.attachments.size > 0) {
             for(let attachment of msg.attachments) {
                 payload.text += " " + attachment[1].url;
