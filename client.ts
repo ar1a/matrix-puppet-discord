@@ -29,6 +29,10 @@ export class DiscordClient extends EventEmitter {
         })
     }
 
+    getUser(id: string) {
+        return this.api.users.get(id);
+    }
+
     connect() {
         const client = new discordjs.Client();
         this.api = client;

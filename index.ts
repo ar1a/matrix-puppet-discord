@@ -22,16 +22,65 @@ export class Adapter extends ThirdPartyAdapter {
 
         this.client.on('ready', () => {
             debug('logged in!');
-        })
+        });
 
         this.client.on('message', msg => {
             debug('message', msg.author.username, msg.content);
-        })
+            this.handleDiscordMessage(msg);
+        });
 
 
         return new Promise(() => {
             this.client.connect();
         });
+    }
+
+    getPayload(data): ThirdPartyPayload {
+        let payload = <ThirdPartyPayload>{
+            roomId: data.channel.id,
+            senderId: undefined
+        };
+
+        if(data.author !== undefined) {
+            payload.senderId = data.author.id;
+            payload.senderName = data.author.username;
+            payload.avatarUrl = data.author.avatarURL;
+        }
+        debug('payload', payload);
+        return payload;
+    }
+
+    getRoomData(id: string): Promise<RoomData> {
+        debug('fetching additional room data...');
+        debug(id);
+        let payload = {};
+        let channel = this.client.findChannel(id);
+        if(channel) {
+            let topic = "No topic set";
+            if(channel.type === "text") {
+                if(channel.topic !== null)
+                    topic = channel.topic;
+            }
+
+            let name = channel.type;
+            if(channel.type == "text") {
+                name = "[" + channel.guild.name + "] " + channel.name;
+            } else if (channel.type = "dm") {
+                channel.recipient.username;
+            }
+            debug('topic', topic);
+            return Promise.resolve(<RoomData> {
+                name: name,
+                topic: topic,
+                isDirect: (channel.type === "dm" ? false : true)
+            });
+        }
+    }
+
+    handleDiscordMessage(msg) {
+        let payload =  <ThirdPartyMessagePayload>this.getPayload(msg);
+        payload.text = msg.content;
+        return this.puppetBridge.sendMessage(payload);
     }
 
     sendMessage(roomid: string, text: string): Promise<void> {
