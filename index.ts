@@ -24,6 +24,10 @@ export class Adapter extends ThirdPartyAdapter {
             debug('logged in!');
         });
 
+        this.client.on('sent', msg => {
+            this.handleDiscordMessage({channel: msg.channel, content: msg.content});
+        });
+
         this.client.on('message', msg => {
             debug('message', msg.author.username, msg.content);
             this.handleDiscordMessage(msg);
@@ -87,13 +91,13 @@ export class Adapter extends ThirdPartyAdapter {
             if(channel.type == "text") {
                 name = "[" + channel.guild.name + "] " + channel.name;
             } else if (channel.type = "dm") {
-                channel.recipient.username;
+                name = undefined;
             }
             debug('topic', topic);
             return Promise.resolve(<RoomData> {
                 name: name,
                 topic: topic,
-                isDirect: (channel.type === "dm" ? false : true)
+                isDirect: (channel.type === "dm")
             });
         }
     }
@@ -106,12 +110,10 @@ export class Adapter extends ThirdPartyAdapter {
 
     sendMessage(roomid: string, text: string): Promise<void> {
         debug('sendMessage', roomid, text);
-        return new Promise(() => {
-            this.client.sendMessage(roomid, text);
-        });
+        return Promise.resolve(this.client.sendMessage(roomid, text));
     }
     sendImageMessage(roomid: string, image: any): Promise<void> {
         debug('sendImageMessage', roomid, image);
-        return new Promise(() => {});
+        return Promise.resolve(this.client.sendImageMessage(roomid, image));
     }
 }

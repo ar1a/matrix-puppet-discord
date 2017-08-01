@@ -37,7 +37,12 @@ export class DiscordClient extends EventEmitter {
         const client = new discordjs.Client();
         this.api = client;
         client.on('message', message => {
-            this.emit('message', message);
+            if(message.author.id === client.user.id) {
+                if(message.content.slice(-1) !== '\ufff0')
+                    this.emit('sent', message);
+            } else {
+                this.emit('message', message);
+            }
         });
 
         client.on('ready', () => {
